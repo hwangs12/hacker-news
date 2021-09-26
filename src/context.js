@@ -11,7 +11,7 @@ import reducer from "./reducer";
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?";
 
-const initialState = { loading: false, news: [] };
+const initialState = { loading: false, news: [], page: 0, query: "" };
 
 const AppContext = React.createContext();
 
@@ -19,10 +19,12 @@ const AppProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	useEffect(() => {
-		const getUrl = async () => {
+		const getUrl = async (page, query) => {
 			try {
 				dispatch({ type: SET_LOADING, payload: { loading: true } });
-				const response = await fetch(API_ENDPOINT);
+				const response = await fetch(
+					`${API_ENDPOINT}query=${query}&page=${page}`
+				);
 				const data = await response.json();
 				const news = data.hits;
 				dispatch({ type: SET_STORIES, payload: { news: news } });
@@ -32,11 +34,19 @@ const AppProvider = ({ children }) => {
 				dispatch({ type: SET_LOADING, payload: { loading: false } });
 			}
 		};
-		getUrl();
-	}, []);
+		getUrl(state.page, state.query);
+	}, [state.page, state.query]);
 	console.log(state);
 	return (
-		<AppContext.Provider value={{ state, dispatch }}>
+		<AppContext.Provider
+			value={{
+				HANDLE_SEARCH,
+				HANDLE_PAGE,
+				REMOVE_STORY,
+				state,
+				dispatch,
+			}}
+		>
 			{children}
 		</AppContext.Provider>
 	);
