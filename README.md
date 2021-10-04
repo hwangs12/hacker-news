@@ -1,5 +1,5 @@
 # Welcome to Hacker-News
 
-### This is using algolia API to view hacker news by relevance of the search result 
+### This app is based off of algolia API to view hacker news by relevance to your search result 
 
-### You can navigate through the different pages. 
+
